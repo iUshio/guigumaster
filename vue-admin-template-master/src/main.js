@@ -35,6 +35,11 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 引入相关api函数
+// 任意组件都可以使用api接口
+import API from '@/api'
+Vue.prototype.$API = API
+
 new Vue({
   el: '#app',
   router,

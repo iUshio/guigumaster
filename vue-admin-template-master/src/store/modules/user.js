@@ -54,24 +54,34 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
+  async getInfo({ commit, state }) {
+      let result = await getInfo(state.token)
+      
+      if(result.code === 20000){
+        commit('SET_NAME', result.data.name)
+        commit('SET_AVATAR', result.data.avatar)
+      }else{
+        return Promise.reject(new Error('Verification failed, please Login again.'))
+      }
 
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
 
-        const { name, avatar } = data
+    // return new Promise((resolve, reject) => {
+    //   getInfo(state.token).then(response => {
+    //     const { data } = response
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    //     if (!data) {
+    //       return reject('Verification failed, please Login again.')
+    //     }
+
+    //     const { name, avatar } = data
+
+    //     commit('SET_NAME', name)
+    //     commit('SET_AVATAR', avatar)
+    //     resolve(data)
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
 
   // user logout
