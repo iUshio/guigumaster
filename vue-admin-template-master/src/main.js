@@ -40,6 +40,10 @@ Vue.config.productionTip = false
 import API from '@/api'
 Vue.prototype.$API = API
 
+// 注册三级联动组件（使用在product下）
+import categorySelect from '@/components/categorySelect'
+Vue.component(categorySelect.name, categorySelect)
+
 new Vue({
   el: '#app',
   router,
