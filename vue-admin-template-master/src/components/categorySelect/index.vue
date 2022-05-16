@@ -90,11 +90,38 @@ export default {
   watch: {
     // 监听category1Id变化，当其发生改变时，更新category2的数据
     "cForm.category1Id"() {
-      this.getCategory2List();
+      // 清除二级分类与三级分类数据
+      if (this.cForm.category2Id) {
+        this.cForm.category2Id = "";
+        this.list2 = [];
+      }
+      if (this.cForm.category3Id) {
+        this.cForm.category3Id = "";
+        this.list3 = [];
+      }
+      // 重新获取二级分类数据
+      if (this.cForm.category1Id) {
+        this.getCategory2List();
+      }
     },
     // 监听category2Id变化，当其发生改变时，更新category3的数据
     "cForm.category2Id"() {
-      this.getCategory3List();
+      // 清除三级分类数据
+      if (this.cForm.category3Id) {
+        this.cForm.category3Id = "";
+        this.list3 = [];
+      }
+      if (this.cForm.category2Id) {
+        this.getCategory3List();
+      }
+    },
+    // 监听category3Id变化，当其发生改变时向父组件传送id，以便发送请求获取平台属性列表
+    "cForm.category3Id"() {
+      this.$emit("getCategoryId", {
+        category1Id: this.cForm.category1Id,
+        category2Id: this.cForm.category2Id,
+        category3Id: this.cForm.category3Id,
+      });
     },
   },
 };

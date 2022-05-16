@@ -21,7 +21,6 @@
        -->
     <el-table style="width: 100%" :data="list" border>
       <el-table-column
-        prop="prop"
         label="序号"
         width="80px"
         align="center"

@@ -12,3 +12,11 @@ export const reqCategory2List = (category1Id) => request({ url: `/admin/product/
 // 获取三级分类api接口
 // /admin/product/getCategory3/{category2Id} get 
 export const reqCategory3List = (category2Id) => request({ url: `/admin/product/getCategory3/${category2Id}`, method: 'get' })
+
+// 获取平台属性数据
+// /admin/product/attrInfoList/{category1Id}/{category2Id}/{category3Id} get
+export const reqAttrList = (category1Id, category2Id, category3Id) => request({ url: `/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`, method: 'get' })
+
+// 添加属性与属性值的接口
+// /admin/product/saveAttrInfo post attrName attrValueList[attrId,valueName] categoryId categoryLevel(3)
+export const reqAddAttr = (data) => request({ url: '/admin/product/saveAttrInfo', method: 'post', data })
