@@ -6,7 +6,7 @@
        -->
     <el-form :inline="true" class="demo-form-inline" :model="cForm">
       <el-form-item label="一级分类">
-        <el-select placeholder="请选择" v-model="cForm.category1Id">
+        <el-select placeholder="请选择" v-model="cForm.category1Id" :disabled='show'>
           <el-option
             :label="c1.name"
             :value="c1.id"
@@ -16,7 +16,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="二级分类">
-        <el-select placeholder="请选择" v-model="cForm.category2Id">
+        <el-select placeholder="请选择" v-model="cForm.category2Id" :disabled='show'>
           <el-option
             :label="c2.name"
             :value="c2.id"
@@ -26,7 +26,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类">
-        <el-select placeholder="请选择" v-model="cForm.category3Id">
+        <el-select placeholder="请选择" v-model="cForm.category3Id" :disabled='show'>
           <el-option
             :label="c3.name"
             :value="c3.id"
@@ -117,6 +117,7 @@ export default {
     },
     // 监听category3Id变化，当其发生改变时向父组件传送id，以便发送请求获取平台属性列表
     "cForm.category3Id"() {
+      // 上传id
       this.$emit("getCategoryId", {
         category1Id: this.cForm.category1Id,
         category2Id: this.cForm.category2Id,
@@ -124,6 +125,7 @@ export default {
       });
     },
   },
+  props:['show'],
 };
 </script>
 

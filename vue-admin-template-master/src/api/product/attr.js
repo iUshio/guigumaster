@@ -19,4 +19,4 @@ export const reqAttrList = (category1Id, category2Id, category3Id) => request({ 
 
 // 添加属性与属性值的接口
 // /admin/product/saveAttrInfo post attrName attrValueList[attrId,valueName] categoryId categoryLevel(3)
-export const reqAddAttr = (data) => request({ url: '/admin/product/saveAttrInfo', method: 'post', data })
+export const reqAddOrUpdateAttr = (data) => request({ url: '/admin/product/saveAttrInfo', method: 'post', data })
