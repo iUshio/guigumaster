@@ -11,45 +11,49 @@
     <!-- spu列表展示修改与更新 -->
     <el-card>
       <!-- spu列表展示 -->
-      <div v-if="scene == 0">
+      <div v-show="scene == 0">
         <!-- 添加spu属性 -->
         <el-button
           type="primary"
           icon="el-icon-plus"
           :disabled="!category3Id"
           @click="addSpu"
-          >
+        >
           添加SPU
-          </el-button>
+        </el-button>
         <!-- spu数据列表 -->
         <el-table style="width: 100%; margin: 10px 0" border :data="records">
           <el-table-column type="index" label="序号" width="80" align>
           </el-table-column>
-          <el-table-column prop="spuName" label="spu名称" width="width">
+          <el-table-column prop="spuName" label="SPU名称" width="width">
           </el-table-column>
-          <el-table-column prop="description" label="spu描述" width="width">
+          <el-table-column prop="description" label="SPU描述" width="width">
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{ row, $index }">
+              <!-- 新增按钮 -->
               <el-button
                 type="success"
                 icon="el-icon-plus"
                 size="mini"
                 title="新增"
               ></el-button>
+              <!-- 修改按钮 -->
               <el-button
                 type="warning"
                 icon="el-icon-edit"
                 size="mini"
                 title="修改"
-                @click="changeSku"
+                @click="changeSku(row)"
               ></el-button>
+              <!-- 查看按钮 -->
               <el-button
                 type="info"
                 icon="el-icon-info"
                 size="mini"
                 title="查看"
               ></el-button>
+              <!-- 删除按钮 -->
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -59,6 +63,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <!-- 分页器 -->
         <el-pagination
           style="text-align: center"
           :current-page="page"
@@ -72,9 +77,13 @@
         </el-pagination>
       </div>
       <!-- 添加SPU|修改SPU -->
-      <SpuForm v-else-if="scene == 1"></SpuForm>
+      <SpuForm
+        v-show="scene == 1"
+        @changeScene="changeScene"
+        ref="spu"
+      ></SpuForm>
       <!-- 添加SKU -->
-      <SkuForm v-else></SkuForm>
+      <SkuForm v-show="scene == 2"></SkuForm>
     </el-card>
   </div>
 </template>
@@ -141,13 +150,21 @@ export default {
       this.getSpuList();
     },
     // 添加Spu按钮回调
-    addSpu(){
-      this.scene = 1
+    addSpu() {
+      this.scene = 1;
     },
     // 修改Spu按钮
-    changeSku(){
-      this.scene = 1
-    }
+    changeSku(row) {
+      this.scene = 1;
+      //获取子组件SpuForm子组件的
+      //在父组件当中可以通过$ref获取子组件等等
+      this.$refs.spu.initSpuData(row);
+    },
+    // SpuForm自定义事件回调
+    changeScene(scene) {
+      // 切换场景
+      this.scene = scene;
+    },
   },
   components: {
     SpuForm,

@@ -1,6 +1,6 @@
 <template>
   <div>
-      添加SKU
+     SKU
   </div>
 </template>
 
