@@ -73,15 +73,17 @@
           </el-table-column>
           <el-table-column prop="prop" label="属性值名称列表" width="width">
             <template slot-scope="{ row, $index }">
+              <!-- 展示属性值 -->
               <el-tag
                 :key="tag.id"
-                v-for="tag in row.spuSaleAttrValueList"
+                v-for="(tag, index) in row.spuSaleAttrValueList"
                 closable
-                @close="handleClose(tag)"
+                @close="handleClose(row, index)"
                 :disable-transitions="false"
               >
                 {{ tag.saleAttrValueName }}
               </el-tag>
+              <!-- 输入框 -->
               <el-input
                 class="input-new-tag"
                 v-if="row.inputVisible"
@@ -93,6 +95,7 @@
                 style="margin: 5px 5px"
               >
               </el-input>
+              <!-- 添加按钮 -->
               <el-button
                 v-else
                 class="button-new-tag"
@@ -106,10 +109,12 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{ row, $index }">
+              <!-- 删除按钮 -->
               <el-button
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
+                @click="spu.spuSaleAttrList.splice($index, 1)"
               ></el-button>
             </template>
           </el-table-column>
@@ -117,7 +122,7 @@
       </el-form-item>
       <!-- 操作 -->
       <el-form-item>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="addOrUpdateSpu">保存</el-button>
         <el-button @click="switchScene">取消</el-button>
       </el-form-item>
     </el-form>
@@ -245,27 +250,17 @@ export default {
     },
     // 切换场景（取消按钮）
     switchScene() {
-      this.$emit("changeScene", 0);
       // 将原有的数据置空
-      this.spu = {
-        //三级分类的id
-        category3Id: 0,
-        //描述
-        description: "",
-        //spu名称
-        spuName: "",
-        //平台的id
-        tmId: "",
-        //收集SPU图片的信息
-        spuImageList: [],
-        //平台属性与属性值收集
-        spuSaleAttrList: [],
-      };
-      this.tradeMarkList = [];
+      // Object.assign：es6中新增的方法，可以合并对象
+      // 组件实例this._data，可以操作data当中响应式数据
+      // 组件实例this.$options：当前组件的配置对象
+      Object.assign(this._data, this.$options.data());
+
+      this.$emit("changeScene", 0);
     },
     // 删除属性值
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    handleClose(row, index) {
+      row.spuSaleAttrValueList.splice(index, 1);
     },
     // 添加属性值
     showInput(row, index) {
@@ -297,9 +292,11 @@ export default {
         return;
       }
       // 新增销售属性值不能重复
-      if(!row.spuSaleAttrValueList.every(
-        (item) => item.saleAttrValueName != inputValue
-      )){
+      if (
+        !row.spuSaleAttrValueList.every(
+          (item) => item.saleAttrValueName != inputValue
+        )
+      ) {
         this.$message({ type: "warning", message: "输入不能重复!" });
         return;
       }
@@ -329,6 +326,56 @@ export default {
       this.spu.spuSaleAttrList.push(newSaleAttr);
       // 清空选择框的数据
       this.attrIdAndAttrName = "";
+    },
+    // 表单保存按钮回调
+    async addOrUpdateSpu() {
+      //整理参数：需要整理照片墙的数据
+      //携带参数：对于图片，需要携带imageName与imageUrl字段
+      this.spu.spuImageList = this.spuImageList.map((item) => {
+        return {
+          imgName: item.name,
+          imgUrl: (item.response && item.response.data) || item.url,
+        };
+      });
+
+      //发请求
+      let result = await this.$API.spu.reqAddOrUpdateSpu(this.spu);
+      if (result.code == 200) {
+        //提示
+        this.$message({ type: "success", message: "保存成功" });
+        //通知父组件回到场景0
+        this.$emit("changeScene", 0);
+      }
+      //清除数据
+      // Object.assign：es6中新增的方法，可以合并对象
+      Object.assign(this._data, this.$options.data());
+    },
+    // 新增spu属性场景初始化spu数据
+    async addSpuData(category3Id) {
+       // 收集三级id
+      this.spu.category3Id = category3Id;
+      
+      // 发送请求
+      // 获取品牌数据
+      let tradeMarkResult = await this.$API.spu.reqTrademarkList();
+      // 获取平台中全部销售属性
+      let baseSaleAttrResult = await this.$API.spu.reqBaseSaleAttrList();
+
+      if (tradeMarkResult.code == 200) {
+        // 存放数据
+        this.tradeMarkList = tradeMarkResult.data;
+      } else {
+        this.$message({ type: "error", message: "获取品牌信息失败！" });
+      }
+
+      if (baseSaleAttrResult.code == 200) {
+        // 存放数据
+        this.saleAttrList = baseSaleAttrResult.data;
+      } else {
+        this.$message({ type: "error", message: "获取销售属性信息失败！" });
+      }
+
+     
     },
   },
   computed: {

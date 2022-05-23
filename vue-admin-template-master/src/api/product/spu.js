@@ -21,3 +21,12 @@ export const reqSpuImageList = (spuId) => request({ url: `/admin/product/spuImag
 // /admin/product/baseSaleAttrList get
 export const reqBaseSaleAttrList = () => request({ url: '/admin/product/baseSaleAttrList', method: 'get' })
 
+// 修改|添加spu
+export const reqAddOrUpdateSpu = (spuInfo) => {
+    // 携带的参数带有id——修改spu
+    if (spuInfo.id) {
+        return request({ url: '/admin/product/updateSpuInfo', method: 'post', data: spuInfo })
+    } else {
+        return request({ url: '/admin/product/saveSpuInfo', method: 'post', data: spuInfo })
+    }
+}

@@ -152,6 +152,8 @@ export default {
     // 添加Spu按钮回调
     addSpu() {
       this.scene = 1;
+      // 通知子组件发送请求
+      this.$refs.spu.addSpuData(this.category3Id);
     },
     // 修改Spu按钮
     changeSku(row) {
@@ -164,6 +166,8 @@ export default {
     changeScene(scene) {
       // 切换场景
       this.scene = scene;
+      // 重新获取spu数据
+      this.getSpuList();
     },
   },
   components: {
