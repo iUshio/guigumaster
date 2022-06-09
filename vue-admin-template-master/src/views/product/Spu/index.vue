@@ -31,12 +31,13 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{ row, $index }">
-              <!-- 新增按钮 -->
+              <!-- 新增sku属性按钮 -->
               <el-button
                 type="success"
                 icon="el-icon-plus"
                 size="mini"
                 title="新增"
+                @click="addSku(row)"
               ></el-button>
               <!-- 修改按钮 -->
               <el-button
@@ -52,14 +53,22 @@
                 icon="el-icon-info"
                 size="mini"
                 title="查看"
+                @click="handler(row)"
               ></el-button>
               <!-- 删除按钮 -->
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                title="删除"
-              ></el-button>
+              <el-popconfirm
+                @onConfirm="deleteSpu(row)"
+                title="这是一段内容确定删除吗？"
+              >
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  title="删除"
+                  style="margin-left: 10px"
+                  slot="reference"
+                ></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -83,7 +92,40 @@
         ref="spu"
       ></SpuForm>
       <!-- 添加SKU -->
-      <SkuForm v-show="scene == 2"></SkuForm>
+      <SkuForm
+        v-show="scene == 2"
+        ref="sku"
+        @changeScenes="changeScenes"
+      ></SkuForm>
+      <!-- sku信息展示对话框 -->
+      <el-dialog
+        :title="`${spu.spuName}的sku列表`"
+        :visible.sync="dialogTableVisible"
+        :before-close="closeDialog"
+      >
+        <el-table :data="skuList" v-loading="loading">
+          <el-table-column
+            prop="skuName"
+            label="名称"
+            width="width"
+          ></el-table-column>
+          <el-table-column
+            prop="price"
+            label="价格"
+            width="width"
+          ></el-table-column>
+          <el-table-column
+            prop="weight"
+            label="重量"
+            width="width"
+          ></el-table-column>
+          <el-table-column label="默认图片" width="width">
+            <template slot-scope="{ row, $index }">
+              <img :src="row.skuDefaultImg" alt="" style="width: 100px" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -115,6 +157,14 @@ export default {
       total: 0,
       // 切换场景，0代表展示spu列表数据,1代表添加|修改SPU，2代表添加SKU
       scene: 0,
+      // 控制sku信息对话框的显示与隐藏
+      dialogTableVisible: false,
+      // spu数据
+      spu: {},
+      // sku数据
+      skuList: [],
+      // 加载动画
+      loading: true,
     };
   },
   methods: {
@@ -168,6 +218,49 @@ export default {
       this.scene = scene;
       // 重新获取spu数据
       this.getSpuList();
+    },
+    // skuForm自定义事件回调
+    changeScenes(scene) {
+      // 切换场景
+      this.scene = scene;
+    },
+    // 删除spu按钮回调
+    async deleteSpu(row) {
+      let result = await this.$API.spu.reqDeleteSpu(row.id);
+      if (result.code === 200) {
+        this.$message({ type: "success", message: "删除成功" });
+        // 重新获取列表数据
+        this.getSpuList();
+      }
+    },
+    // 添加sku按钮回调
+    addSku(row) {
+      // 切换场景为2
+      this.scene = 2;
+      // 父组件调用子组件方法，让子组件发送请求
+      this.$refs.sku.getData(this.category1Id, this.category2Id, row);
+    },
+    // 查看sku按钮回调
+    async handler(spu) {
+      // 弹出对话框
+      this.dialogTableVisible = true;
+
+      this.spu = spu;
+      // 获取sku列表数据
+      let result = await this.$API.spu.reqSkuList(spu.id);
+      if (result.code === 200) {
+        this.skuList = result.data;
+        this.loading = false;
+      }
+    },
+    // 关闭sku信息对话框回调
+    closeDialog(done) {
+      // 重置loading
+      this.loading = true;
+      // 清除sku信息
+      this.skuList = [];
+      // 关闭对话框
+      done();
     },
   },
   components: {
