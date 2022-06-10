@@ -24,3 +24,8 @@ export const reqSale = (skuId) => request({ url: `/admin/product/onSale/${skuId}
 // 下架商品
 // /admin/product/cancelSale/{skuId}
 export const reqCancel = (skuId) => request({ url: `/admin/product/cancelSale/${skuId}`, method: 'get' })
+
+// 获取sku展示详情信息
+// /admin/product/getSkuById/{skuId} get
+export const reqSkuById = (skuId) => request({ url: `/admin/product/getSkuById/${skuId}`, method: 'get' })
+

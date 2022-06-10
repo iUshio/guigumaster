@@ -36,9 +36,19 @@
             v-else
           ></el-button>
           <!-- 编辑按钮 -->
-          <el-button type="primary" icon="el-icon-edit" size="mini" @click="edit"></el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="mini"
+            @click="edit"
+          ></el-button>
           <!-- 查看按钮 -->
-          <el-button type="info" icon="el-icon-info" size="mini"></el-button>
+          <el-button
+            type="info"
+            icon="el-icon-info"
+            size="mini"
+            @click="getSkuInfo(row)"
+          ></el-button>
           <!-- 删除按钮 -->
           <el-button
             type="danger"
@@ -48,8 +58,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页器 
-       -->
+    <!-- 分页器 -->
     <el-pagination
       style="text-align: center"
       :current-page="1"
@@ -61,6 +70,66 @@
       @size-change="handleSizeChange"
     >
     </el-pagination>
+    <!-- 抽屉效果 -->
+    <el-drawer
+      :visible.sync="drawer"
+      :direction="direction"
+      :show-close="false"
+      size="50%"
+    >
+      <el-row>
+        <el-col :span="5">名称</el-col>
+        <el-col :span="16">{{ skuInfo.skuName }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">描述</el-col>
+        <el-col :span="16">{{ skuInfo.skuDesc }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">价格</el-col>
+        <el-col :span="16">{{ skuInfo.price }}元</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">平台属性</el-col>
+        <el-col :span="16">
+          <template>
+            <el-tag
+              type="success"
+              v-for="(attr, index) in skuInfo.skuAttrValueList"
+              :key="attr.id"
+              style="margin-right: 10px; margin-bottom: 5px"
+            >
+              {{ attr.attrId }}-{{ attr.valueId }}
+            </el-tag>
+          </template>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">商品图片</el-col>
+        <el-col :span="16">
+          <el-carousel indicator-position="outside">
+            <el-carousel-item
+              v-for="item in skuInfo.skuImageList"
+              :key="item.id"
+            >
+              <img
+                :src="item.imgUrl"
+                alt=""
+                style="
+                  display: block;
+                  height: 100%;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+            </el-carousel-item>
+          </el-carousel> </el-col></el-row
+    ></el-drawer>
+  </div>
+</template>
+        </el-col>
+      </el-row>
+    </el-drawer>
   </div>
 </template>
 
@@ -77,6 +146,12 @@ export default {
       total: 0,
       // sku列表的数据
       records: [],
+      // sku详情信息
+      skuInfo: {},
+      // 抽屉的显示与隐藏
+      drawer: false,
+      // 控制抽屉的方向
+      direction: "rtl",
     };
   },
   mounted() {
@@ -116,12 +191,29 @@ export default {
       }
     },
     // 编辑按钮回调
-    edit(){
+    edit() {
       this.$message({ type: "info", message: "正在开发中......" });
-    }
+    },
+    // 获取Sku详情
+    async getSkuInfo(sku) {
+      // 打开抽屉
+      this.drawer = true;
+
+      let result = await this.$API.sku.reqSkuById(sku.id);
+      if (result.code === 200) {
+        this.skuInfo = result.data;
+      }
+    },
   },
 };
 </script>
 
 <style>
+.el-row .el-col-5 {
+  font-size: 18px;
+  text-align: right;
+}
+.el-col {
+  margin: 10px;
+}
 </style>
