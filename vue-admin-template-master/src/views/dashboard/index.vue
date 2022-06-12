@@ -1,24 +1,25 @@
 <template>
-  <div >
+  <div>
     <Card></Card>
+    <Sale></Sale>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Card from './Card'
+import { mapGetters } from "vuex";
+import Card from "./Card";
+import Sale from "./Sale";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   computed: {
-    ...mapGetters([
-      'name'
-    ])
+    ...mapGetters(["name"]),
   },
-  components:{
-    Card
-  }
-}
+  components: {
+    Card,
+    Sale,
+  },
+};
 </script>
 
 <style lang="scss" scoped>

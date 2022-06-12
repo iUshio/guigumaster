@@ -52,7 +52,7 @@ export default {
   padding: 10px 0px;
 }
 .card-charts {
-  height: 40px;
+  height: 50px;
   font-size: 10px;
 }
 .card-footer {
