@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="(route,index) in routes" :key="index" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -23,15 +23,16 @@ import { mapGetters } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
-
 export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
       'sidebar'
     ]),
+    //应该替换为仓库中已经计算好的需要展示的全部路由
     routes() {
-      return this.$router.options.routes
+      //siderbar：需要遍历的应该是仓库计算完毕的全部路由
+      return this.$store.state.user.resultAllRputes;
     },
     activeMenu() {
       const route = this.$route

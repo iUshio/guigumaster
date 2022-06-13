@@ -23,7 +23,7 @@ import '@/permission' // permission control
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'development') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
@@ -45,8 +45,7 @@ import categorySelect from '@/components/categorySelect'
 Vue.component(categorySelect.name, categorySelect)
 
 new Vue({
-  el: '#app',
   router,
   store,
   render: h => h(App)
-})
+}).$mount('#app')

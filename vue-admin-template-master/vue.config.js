@@ -41,10 +41,14 @@ module.exports = {
       errors: true
     },
     // 配置代理跨域
-    proxy:{
-      '/dev-api':{
-        target:'http://gmall-h5-api.atguigu.cn',
-        pathRewrite:{'^/dev-api':''}
+    proxy: {
+      '/dev-api': {
+        target: 'http://gmall-h5-api.atguigu.cn',
+        pathRewrite: { '^/dev-api': '' }
+      },
+      '/prod-api': {
+        target: 'http://gmall-h5-api.atguigu.cn',
+        pathRewrite: { '^/prod-api': '' }
       }
     }
   },
@@ -97,7 +101,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()

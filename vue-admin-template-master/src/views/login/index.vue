@@ -1,28 +1,16 @@
 <template>
   <div class="login-container">
-    <!-- el-form：elementUI组件，经常展现表单元素 -->
-    <!-- :model="loginForm"表示将表单数据收集到响应式数据loginForm中 -->
-    <!-- :rules="loginRules"elementUI提供的表单验证规则 -->
-    <el-form
-      ref="loginForm"
-      :model="loginForm"
-      :rules="loginRules"
-      class="login-form"
-      auto-complete="on"
-      label-position="left"
-    >
-      <!-- 表单标题 -->
+    <!-- el-form组件：elementUI插件里面的一个组件，经常展示表单元素  model：用于收集表单数据  rules：表单验证规则-->
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+
       <div class="title-container">
         <h3 class="title">登录</h3>
       </div>
 
-      <!-- 用户账号 -->
       <el-form-item prop="username">
-        <!-- 用户账号小图标 -->
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <!-- 用户账号输入框 -->
         <el-input
           ref="username"
           v-model="loginForm.username"
@@ -34,7 +22,6 @@
         />
       </el-form-item>
 
-      <!-- 用户密码 -->
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -51,124 +38,109 @@
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon
-            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-          />
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <!-- 表单提交 -->
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width: 100%; margin-bottom: 30px"
-        @click.native.prevent="handleLogin"
-        >登录</el-button
-      >
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <!-- 登录提示信息 -->
       <div class="tips">
-        <span style="margin-right: 20px">username: admin</span>
+        <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
       </div>
+
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+import { validUsername } from '@/utils/validate'
 
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
-    // 这俩在进行表单验证，验证用户名与密码
+    //先不用在意：这里面在进行表单验证，验证用户名与密码操作
+    //回首在看这里
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+        callback(new Error('Please enter the correct user name'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error('The password can not be less than 6 digits'))
       } else {
-        callback();
+        callback()
       }
-    };
-    // 响应式数据
+    }
     return {
       loginForm: {
-        username: "admin",
-        password: "111111",
+        username: 'admin',
+        password: '111111'
       },
       loginRules: {
-        username: [
-          { required: true, trigger: "blur", validator: validateUsername },
-        ],
-        password: [
-          { required: true, trigger: "blur", validator: validatePassword },
-        ],
+        // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
-      passwordType: "password",
-      redirect: undefined,
-    };
+      passwordType: 'password',
+      redirect: undefined
+    }
   },
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     showPwd() {
-      if (this.passwordType === "password") {
-        this.passwordType = "";
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
       } else {
-        this.passwordType = "password";
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
-      });
+        this.$refs.password.focus()
+      })
     },
-    // 登录业务
+    //登录业务：发请求，带着用户名与密码给服务器（成功与失败）
     handleLogin() {
-      // 验证表单元素（用户名与密码）
-      // 符合则返回true
-      this.$refs.loginForm.validate((valid) => {
-        // 如果符合规则
+      //这里是在验证表单元素（用户名与密码）的是否符合规则
+      this.$refs.loginForm.validate(valid => {
+        //如果符合验证规则
         if (valid) {
-          // 按钮会有一个加载效果
+          //按钮会有一个loading效果
           this.loading = true;
-          // 派发action
-          this.$store
-            .dispatch("user/login", this.loginForm).then(() => {
-              // 登录成功进行路由跳转
-              this.$router.push({ path: this.redirect || "/" });
-              // 按钮加载效果结束
-              this.loading = false;
-            }).catch(() => {
-              this.loading = false;
-            });
+          //派发一个action:user/login,带着用户名与密码的载荷
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
+            //登录成功进行路由的跳转
+            this.$router.push({ path: this.redirect || '/' });
+            //loading效果结束
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg: #283443;
-$light_gray: #fff;
+$bg:#283443;
+$light_gray:#fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -211,16 +183,16 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
+$bg:#2d3a4b;
+$dark_gray:#889aa4;
+$light_gray:#eee;
 
 .login-container {
   min-height: 100%;
   width: 100%;
-  background: url(~@/assets/loginWallpaper.jpg) no-repeat;
-  background-size: 100% 100%;
   overflow: hidden;
+  background:url(~@/assets/loginWallpaper.jpg);
+  background-size: 100% 100%;
 
   .login-form {
     position: relative;

@@ -2,34 +2,27 @@
   <div>
     <Card></Card>
     <Sale></Sale>
+    <Observe></Observe>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import Card from "./Card";
-import Sale from "./Sale";
-
+import Sale from './Sale'
+import Card from './Card'
+import Observe from './Observe'
 export default {
-  name: "Dashboard",
-  computed: {
-    ...mapGetters(["name"]),
-  },
-  components: {
+  name: '',
+  components:{
     Card,
     Sale,
+    Observe
   },
-};
-</script>
-
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
+  mounted(){
+    this.$store.dispatch('getData');
   }
 }
+</script>
+
+<style scoped>
+
 </style>

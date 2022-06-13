@@ -30,7 +30,7 @@
       <div>
         <el-row :gutter="10">
           <el-col :span="18">
-            <div class="charts" ref="charts"></div>
+            <div class="charts" ref="chart"></div>
           </el-col>
           <el-col :span="6">
             <div class="titleRight">
@@ -81,7 +81,10 @@
 </template>
 
 <script>
+//引入echarts
 import echarts from "echarts";
+import dayjs from "dayjs";
+import { mapState } from "vuex";
 export default {
   name: "Sale",
   data() {
@@ -93,7 +96,7 @@ export default {
   },
   mounted() {
     //   初始化echarts实例
-    this.myCharts = echarts.init(this.$refs.charts);
+    this.myCharts = echarts.init(this.$refs.chart);
     // 配置数据
     this.myCharts.setOption({
       title: {
@@ -114,7 +117,7 @@ export default {
       xAxis: [
         {
           type: "category",
-          data: ["一月", "二月", "三月", "四月", "五月"],
+          data: [],
           axisTick: {
             alignWithLabel: true,
           },
@@ -130,23 +133,54 @@ export default {
           name: "Direct",
           type: "bar",
           barWidth: "60%",
-          data: [3, 22, 13, 17, 49],
+          data: [],
           color: "yellowgreen",
         },
       ],
     });
   },
   computed: {
-    // 计算title
+    //计算属性-标题
     title() {
+      //重新设置配置项
       return this.activeName == "sale" ? "销售额" : "访问量";
     },
+    ...mapState({
+      listData: (state) => state.home.list,
+    }),
   },
+  //监听属性
   watch: {
     title() {
       console.log("修改配置数据");
       //重新修改图标的配置数据
       //图标配置数据可以再次修改，如果有新的数值，新的数值，没有新的数值，还是用以前的
+      this.myCharts.setOption({
+        title: {
+          text: this.title + "趋势",
+        },
+        xAxis: {
+          data:
+            this.title == "销售额"
+              ? this.listData.orderFullYearAxis
+              : this.listData.userFullYearAxis,
+        },
+        series: [
+          {
+            name: "Direct",
+            type: "bar",
+            barWidth: "60%",
+            data:
+              this.title == "销售额"
+                ? this.listData.orderFullYear
+                : this.listData.userFullYear,
+            color: "yellowgreen",
+          },
+        ],
+      });
+    },
+    listData() {
+      console.log("111");
       this.myCharts.setOption({
         title: {
           text: this.title + "趋势",
@@ -166,7 +200,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: ["一月", "二月", "三月", "四月", "五月"],
+            data: this.listData.orderFullYearAxis,
             axisTick: {
               alignWithLabel: true,
             },
@@ -182,11 +216,37 @@ export default {
             name: "Direct",
             type: "bar",
             barWidth: "60%",
-            data: [3, 22, 13, 17, 49],
+            data: this.listData.orderFullYear,
             color: "yellowgreen",
           },
         ],
       });
+      console.log("111");
+    },
+  },
+  methods: {
+    //本天
+    setDay() {
+      const day = dayjs().format("YYYY-MM-DD");
+      this.date = [day, day];
+    },
+    //本周
+    setWeek() {
+      const start = dayjs().day(1).format("YYYY-MM-DD");
+      const end = dayjs().day(7).format("YYYY-MM-DD");
+      this.date = [start, end];
+    },
+    //本月
+    setMonth() {
+      const start = dayjs().startOf("month").format("YYYY-MM-DD");
+      const end = dayjs().endOf("month").format("YYYY-MM-DD");
+      this.date = [start, end];
+    },
+    //本年
+    setYear() {
+      const start = dayjs().startOf("year").format("YYYY-MM-DD");
+      const end = dayjs().endOf("year").format("YYYY-MM-DD");
+      this.date = [start, end];
     },
   },
 };
