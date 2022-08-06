@@ -53,16 +53,16 @@
       
       <el-table-column label="操作" width="300" align="center">
         <template slot-scope="{row}">
-          <HintButton size="mini" type="info" icon="el-icon-info" title="分配权限"
+          <el-button size="mini" type="info" icon="el-icon-info" title="分配权限"
             @click="$router.push(`/acl/role/auth/${row.id}?roleName=${row.roleName}`)"/>
 
-          <HintButton size="mini" type="primary" icon="el-icon-check" title="确定" 
+          <el-button size="mini" type="primary" icon="el-icon-check" title="确定" 
             @click="updateRole(row)" v-if="row.edit"/>
-          <HintButton size="mini" type="primary" icon="el-icon-edit" title="修改角色" 
+          <el-button size="mini" type="primary" icon="el-icon-edit" title="修改角色" 
             @click="row.edit= true" v-if="!row.edit"/>
 
             
-          <HintButton size="mini" type="danger" icon="el-icon-delete" title="删除角色"
+          <el-button size="mini" type="danger" icon="el-icon-delete" title="删除角色"
             @click="removeRole(row)"/>
         </template>
       </el-table-column>

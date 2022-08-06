@@ -86,6 +86,7 @@ const mutations = {
 const actions = {
   //这里在处理登录业务
   async login({ commit }, userInfo) {
+    
     //解构出用户名与密码
     const { username, password } = userInfo;
     let result = await login({ username: username.trim(), password: password });

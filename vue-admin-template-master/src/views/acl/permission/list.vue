@@ -52,7 +52,7 @@
       <el-table-column label="操作">
         <template slot-scope="{row}">
           
-          <HintButton
+          <el-button
             :disabled="row.level===4"
             type="primary"
             icon="el-icon-plus"
@@ -61,7 +61,7 @@
             :title="getAddTitle(row.level)"
           />
 
-          <HintButton
+          <el-button
             type="primary"
             icon="el-icon-edit"
             size="mini"
@@ -70,7 +70,7 @@
             :title="row.level===4 ? '修改功能' : '修改菜单'"
           />
 
-          <HintButton
+          <el-button
             :disabled="row.level===1"
             type="danger"
             icon="el-icon-delete"

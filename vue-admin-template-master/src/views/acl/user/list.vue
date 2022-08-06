@@ -45,12 +45,12 @@
 
       <el-table-column label="操作" width="230" align="center">
         <template slot-scope="{row}">
-          <HintButton type="info" size="mini" icon="el-icon-user-solid" title="分配角色"
+          <el-button type="info" size="mini" icon="el-icon-user-solid" title="分配角色"
             @click="showAssignRole(row)"/>
-          <HintButton type="primary" size="mini" icon="el-icon-edit" title="修改用户"
+          <el-button type="primary" size="mini" icon="el-icon-edit" title="修改用户"
             @click="showUpdateUser(row)"/>
           <el-popconfirm :title="`确定删除 ${row.username} 吗?`" @onConfirm="removeUser(row.id)">
-            <HintButton style="margin-left:10px" slot="reference" type="danger" size="mini" icon="el-icon-delete" 
+            <el-button style="margin-left:10px" slot="reference" type="danger" size="mini" icon="el-icon-delete" 
               title="删除用户"/>
           </el-popconfirm>
         </template>

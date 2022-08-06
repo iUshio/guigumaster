@@ -42,15 +42,15 @@ module.exports = {
     },
     // 配置代理跨域
     proxy: {
-      '/dev-api': {
+      [process.env.VUE_APP_BASE_API]: {
         target: 'http://gmall-h5-api.atguigu.cn',
-        pathRewrite: { '^/dev-api': '' }
+        // changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
       },
-      '/prod-api': {
-        target: 'http://gmall-h5-api.atguigu.cn',
-        pathRewrite: { '^/prod-api': '' }
-      }
-    }
+    },
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

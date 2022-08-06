@@ -16,8 +16,10 @@
           icon="el-icon-plus"
           :disabled="attrList.length === 0"
           @click="addAttr"
-          >添加属性</el-button
-        >
+          >
+          添加属性
+          </el-button>
+          
         <!-- 表格，展示平台属性 -->
         <el-table :data="attrList" style="width: 100%" border>
           <el-table-column type="index" label="序号" width="80" align="center">
